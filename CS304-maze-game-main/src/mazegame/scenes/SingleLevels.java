@@ -17,7 +17,7 @@ import java.io.IOException;
 public class SingleLevels implements GLEventListener, KeyListener {
     private JFrame frame;
     private GLUT glut;
-    public static int myStart=0;
+    public static int myStart = 0;
 
     // صورة الأزرار
     private final String[] textureNames = {"levels.jpg"};
@@ -25,13 +25,10 @@ public class SingleLevels implements GLEventListener, KeyListener {
     private int[] textureID = new int[textureLen];
     private TextureReader.Texture[] textures = new TextureReader.Texture[textureLen];
 
-    // حالة تأثيرات التفاعل مع الأزرار
-    private boolean[] isButtonHovered = new boolean[textureLen];
 
     public void start() {
-        System.out.println("main menu ....");
 
-        frame = new JFrame("Maze Game - Main Menu");
+        frame = new JFrame("Maze Game - Single Levels Menu");
 
         GLCapabilities capabilities = new GLCapabilities();
         GLCanvas canvas = new GLCanvas(capabilities);
@@ -50,7 +47,7 @@ public class SingleLevels implements GLEventListener, KeyListener {
 
 
         frame.add(canvas);
-        frame.setSize(800, 600);
+        frame.setSize(1300, 900);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
@@ -80,7 +77,6 @@ public class SingleLevels implements GLEventListener, KeyListener {
                         textures[i].getPixels()
                 );
 
-                // تحسين جودة النسيج باستخدام فلتر LINEAR
                 gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
                 gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
             } catch (IOException e) {
@@ -100,18 +96,15 @@ public class SingleLevels implements GLEventListener, KeyListener {
     }
 
 
-
     public void drawBackground(GL gl, GLAutoDrawable drawable) {
         gl.glEnable(GL.GL_BLEND);
         gl.glBindTexture(GL.GL_TEXTURE_2D, textureID[0]);
 
         gl.glPushMatrix();
 
-        // الحصول على أبعاد الشاشة (حجم الـ Canvas)
         int width = drawable.getWidth();  // أبعاد الـ Canvas الفعلية
         int height = drawable.getHeight(); // أبعاد الـ Canvas الفعلية
 
-        // ملء مساحة كامل النافذة (Canvas) مع تصغير الصورة لتناسب
         gl.glBegin(GL.GL_QUADS);
         gl.glTexCoord2f(0.0f, 0.0f);
         gl.glVertex3f(-1.0f, -1.0f, -1.0f);
@@ -129,21 +122,17 @@ public class SingleLevels implements GLEventListener, KeyListener {
     }
 
 
-
     public void handleMouseClick(int mouseX, int mouseY, int canvasWidth, int canvasHeight) {
-        // تحويل إحداثيات الماوس من شاشة إلى إحداثيات OpenGL
         float normalizedX = (2.0f * mouseX) / canvasWidth - 1.0f;
         float normalizedY = 1.0f - (2.0f * mouseY) / canvasHeight;
 
-        // التحقق من الضغط على الأزرار
         if (normalizedX >= -0.36f && normalizedX <= 0.38f && normalizedY >= 0.50f && normalizedY <= 0.73f) {
             easy();
         } else if (normalizedX >= -0.36f && normalizedX <= 0.38f && normalizedY >= -0.05 && normalizedY <= 0.18) {
-            normal(); // الزر الجديد (Start 2)
+            normal();
         } else if (normalizedX >= -0.36f && normalizedX <= 0.38f && normalizedY >= -0.65f && normalizedY <= -0.42f) {
             hard();
-        }
-        else if (normalizedX >= -0.8f && normalizedX <= -0.05f && normalizedY >= -0.94f && normalizedY <= -0.82f) {
+        } else if (normalizedX >= -0.8f && normalizedX <= -0.05f && normalizedY >= -0.94f && normalizedY <= -0.82f) {
             exitGame();
         }
 
@@ -151,29 +140,28 @@ public class SingleLevels implements GLEventListener, KeyListener {
 
 
     public void exitGame() {
-        System.out.println("Exit Game");
-        System.out.println("START GAME ");
         frame.dispose();
         MainMenuScene mainMenuScene = new MainMenuScene();
         mainMenuScene.start();
     }
-    public void normal() {
-        myStart=2;
-        frame.dispose();
-        GameScene singleGameScene = new GameScene(2);
-        singleGameScene.start();
-    }
 
     public void easy() {
-        myStart=1;
+        myStart = 1;
         frame.dispose();
         GameScene singleGameScene = new GameScene(1);
         singleGameScene.start();
     }
 
+    public void normal() {
+        myStart = 2;
+        frame.dispose();
+        GameScene singleGameScene = new GameScene(2);
+        singleGameScene.start();
+    }
+
 
     public void hard() {
-        myStart=3;
+        myStart = 3;
         frame.dispose();
         GameScene singleGameScene = new GameScene(3);
         singleGameScene.start();
@@ -183,18 +171,12 @@ public class SingleLevels implements GLEventListener, KeyListener {
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
 
-        if (keyCode == KeyEvent.VK_ESCAPE) {
+        if (keyCode == KeyEvent.VK_ESCAPE || keyCode == KeyEvent.VK_BACK_SPACE) {
             frame.dispose();
             MainMenuScene mainMenu = new MainMenuScene();
             mainMenu.start();
         }
-        if (keyCode == KeyEvent.VK_1 || keyCode == e.VK_NUMPAD1) {
-            normal();
-        } else if (keyCode == KeyEvent.VK_2 || keyCode == e.VK_NUMPAD2) {
-            normal(); // الزر الجديد Start 2
-        } else if (keyCode == KeyEvent.VK_3 || keyCode == e.VK_NUMPAD3) {
-            hard();
-        }
+
     }
 
     @Override

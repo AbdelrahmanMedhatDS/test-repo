@@ -30,7 +30,7 @@ public class Levels implements GLEventListener, KeyListener {
     public void start() {
         System.out.println("main menu ....");
 
-        frame = new JFrame("Maze Game - Main Menu");
+        frame = new JFrame("Maze Game - Multi Levels");
 
         GLCapabilities capabilities = new GLCapabilities();
         GLCanvas canvas = new GLCanvas(capabilities);
@@ -39,7 +39,6 @@ public class Levels implements GLEventListener, KeyListener {
         canvas.setFocusable(true);
         canvas.requestFocusInWindow();
 
-        // إضافة MouseListener للاستماع للنقرات
         canvas.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -49,7 +48,7 @@ public class Levels implements GLEventListener, KeyListener {
 
 
         frame.add(canvas);
-        frame.setSize(800, 600);
+        frame.setSize(1300, 900);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
@@ -79,7 +78,6 @@ public class Levels implements GLEventListener, KeyListener {
                         textures[i].getPixels()
                 );
 
-                // تحسين جودة النسيج باستخدام فلتر LINEAR
                 gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
                 gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
             } catch (IOException e) {
@@ -104,11 +102,9 @@ public class Levels implements GLEventListener, KeyListener {
 
         gl.glPushMatrix();
 
-        // الحصول على أبعاد الشاشة (حجم الـ Canvas)
         int width = drawable.getWidth();  // أبعاد الـ Canvas الفعلية
         int height = drawable.getHeight(); // أبعاد الـ Canvas الفعلية
 
-        // ملء مساحة كامل النافذة (Canvas) مع تصغير الصورة لتناسب
         gl.glBegin(GL.GL_QUADS);
         gl.glTexCoord2f(0.0f, 0.0f);
         gl.glVertex3f(-1.0f, -1.0f, -1.0f);
@@ -127,55 +123,38 @@ public class Levels implements GLEventListener, KeyListener {
 
 
     public void handleMouseClick(int mouseX, int mouseY, int canvasWidth, int canvasHeight) {
-        // تحويل إحداثيات الماوس من شاشة إلى إحداثيات OpenGL
         float normalizedX = (2.0f * mouseX) / canvasWidth - 1.0f;
         float normalizedY = 1.0f - (2.0f * mouseY) / canvasHeight;
 
 
-        // التحقق من الضغط على الأزرار
         if (normalizedX >= -0.36f && normalizedX <= 0.38f && normalizedY >= 0.50f && normalizedY <= 0.73f) {
             MultiEasy();
         } else if (normalizedX >= -0.36f && normalizedX <= 0.38f && normalizedY >= -0.05 && normalizedY <= 0.18) {
-            MultiNormal(); // الزر الجديد (Start 2)
+            MultiNormal();
         } else if (normalizedX >= -0.36f && normalizedX <= 0.38f && normalizedY >= -0.65f && normalizedY <= -0.42f) {
             MultiHard();
-        }
-        else if (normalizedX >= -0.8f && normalizedX <= -0.05f && normalizedY >= -0.94f && normalizedY <= -0.82f) {
+        } else if (normalizedX >= -0.8f && normalizedX <= -0.05f && normalizedY >= -0.94f && normalizedY <= -0.82f) {
             exitGame();
         }
 
     }
-//    public void handleMouseClick(int mouseX, int mouseY, int canvasWidth, int canvasHeight) {
-//        // تحويل إحداثيات الماوس من شاشة إلى إحداثيات OpenGL
-//        float normalizedX = (2.0f * mouseX) / canvasWidth - 1.0f;
-//        float normalizedY = 1.0f - (2.0f * mouseY) / canvasHeight;
-//
-//        // التحقق من الضغط على الأزرار
-//        if (normalizedX >= -0.36f && normalizedX <= 0.38f && normalizedY >= 0.13 && normalizedY <= 0.33) {
-//            single();
-//        } else if (normalizedX >= -0.36f && normalizedX <= 0.38f && normalizedY >= -0.45f && normalizedY <= -0.22f) {
-//            Multi(); // الزر الجديد (Start 2)
-//        } else if (normalizedX >= -0.95f && normalizedX <= -0.60f && normalizedY >= -0.94f && normalizedY <= -0.82f) {
-//            exitGame();
-//        }
-//    }
-public void exitGame() {
-    System.out.println("Exit Game");
-    System.out.println("START GAME ");
-    frame.dispose();
-    MainMenuScene mainMenuScene = new MainMenuScene();
-    mainMenuScene.start();
-}
-    public void MultiNormal() {
+
+    public void exitGame() {
         frame.dispose();
-        MultiGameScene multiGameScene = new MultiGameScene(2);
-        multiGameScene.start();
+        MainMenuScene mainMenuScene = new MainMenuScene();
+        mainMenuScene.start();
     }
 
     public void MultiEasy() {
 
         frame.dispose();
         MultiGameScene multiGameScene = new MultiGameScene(1);
+        multiGameScene.start();
+    }
+
+    public void MultiNormal() {
+        frame.dispose();
+        MultiGameScene multiGameScene = new MultiGameScene(2);
         multiGameScene.start();
     }
 
@@ -190,17 +169,12 @@ public void exitGame() {
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
 
-        if (keyCode == KeyEvent.VK_ESCAPE) {
+        if (keyCode == KeyEvent.VK_ESCAPE||keyCode == KeyEvent.VK_BACK_SPACE) {
             frame.dispose();
             MainMenuScene mainMenu = new MainMenuScene();
             mainMenu.start();
         }
-        if (keyCode == KeyEvent.VK_1 || keyCode == e.VK_NUMPAD1) {
-MultiEasy();
-        } else if (keyCode == KeyEvent.VK_2 || keyCode == e.VK_NUMPAD2) {
-           MultiNormal();// الزر الجديد Start 2
-        } else if (keyCode == KeyEvent.VK_3 || keyCode == e.VK_NUMPAD3) {
-MultiHard();        }
+
     }
 
     @Override

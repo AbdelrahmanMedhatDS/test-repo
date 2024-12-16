@@ -17,13 +17,11 @@ public class Menu implements GLEventListener, KeyListener {
     private GLUT glut;
 
     // صورة الأزرار
-    private final String[] textureNames = {"back1.jpg","Welcome.png"};
+    private final String[] textureNames = {"back1.jpg"};
     private final int textureLen = textureNames.length;
     private int[] textureID = new int[textureLen];
     private TextureReader.Texture[] textures = new TextureReader.Texture[textureLen];
 
-    // حالة تأثيرات التفاعل مع الأزرار
-    private boolean[] isButtonHovered = new boolean[textureLen];
 
     public void start() {
         System.out.println("main menu ....");
@@ -47,7 +45,7 @@ public class Menu implements GLEventListener, KeyListener {
 
 
         frame.add(canvas);
-        frame.setSize(800, 600);
+        frame.setSize(1300, 900);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
@@ -93,10 +91,9 @@ public class Menu implements GLEventListener, KeyListener {
         GL gl = drawable.getGL();
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);
         drawBackground(gl, drawable,0);
-        drawBackground(gl, drawable,1);
     }
 
-    public void drawBackground(GL gl, GLAutoDrawable drawable,int textureIndex) {
+    public void drawBackground(GL gl, GLAutoDrawable drawable ,int textureIndex) {
         gl.glEnable(GL.GL_BLEND);
         gl.glBindTexture(GL.GL_TEXTURE_2D, textureID[textureIndex]);
 
@@ -124,7 +121,6 @@ public class Menu implements GLEventListener, KeyListener {
         float normalizedX = (2.0f * mouseX) / canvasWidth - 1.0f;
         float normalizedY = 1.0f - (2.0f * mouseY) / canvasHeight;
 
-        // التحقق من الضغط على الأزرار
         if (normalizedX >= -0.36f && normalizedX <= 0.38f && normalizedY >= -0.13f && normalizedY <= 0.1f) {
             starGame();
         } else if (normalizedX >= -0.36f && normalizedX <= 0.38f && normalizedY >= -0.45f && normalizedY <= -0.23f) {
@@ -159,7 +155,7 @@ public class Menu implements GLEventListener, KeyListener {
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
 
-      if (keyCode == KeyEvent.VK_3 || keyCode == e.VK_NUMPAD3) {
+      if ( keyCode == e.VK_ESCAPE) {
             exitGame();
         }
     }

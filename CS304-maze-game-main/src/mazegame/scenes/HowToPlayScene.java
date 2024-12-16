@@ -1,17 +1,28 @@
 package mazegame.scenes;
 
+import static utilities.texture.TextureReader.readTexture;
+import utilities.texture.TextureReader;
 import com.sun.opengl.util.GLUT;
-
 import javax.media.opengl.*;
+import javax.media.opengl.glu.GLU;
 import javax.swing.JFrame;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+
+import java.io.IOException;
+
+
+import static utilities.texture.TextureReader.readTexture;
 
 public class HowToPlayScene implements GLEventListener, KeyListener {
     private JFrame frame;
     private GLCanvas canvas;
     private GLUT glut;
 
+    private final String[] textureNames = {"howtoplay.jpg"};
+    private final int textureLen = textureNames.length;
+    private int[] textureID = new int[textureLen];
+    private TextureReader.Texture[] textures = new TextureReader.Texture[textureLen];
     public void start() {
         System.out.println("instructions ....");
 
@@ -21,7 +32,7 @@ public class HowToPlayScene implements GLEventListener, KeyListener {
         canvas.addKeyListener(this);
         canvas.setFocusable(true);
         frame.add(canvas);
-        frame.setSize(800, 600);
+        frame.setSize(1300, 900);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
         canvas.requestFocusInWindow();
@@ -34,55 +45,68 @@ public class HowToPlayScene implements GLEventListener, KeyListener {
     public void init(GLAutoDrawable drawable) {
         GL gl = drawable.getGL();
 
-        gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        gl.glClearColor(25/255f, 29/255f, 38/255f,0);
+        gl.glEnable(GL.GL_TEXTURE_2D);
+        gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+        gl.glGenTextures(textureLen, textureID, 0);
+        for (int i = 0; i < textureLen; i++) {
+            try {
+                gl.glBindTexture(GL.GL_TEXTURE_2D, textureID[i]);
+                textures[i] = readTexture("./utilities/images/" + textureNames[i], true);
+
+                new GLU().gluBuild2DMipmaps(
+                        GL.GL_TEXTURE_2D,
+                        GL.GL_RGBA,
+                        textures[i].getWidth(),
+                        textures[i].getHeight(),
+                        GL.GL_RGBA,
+                        GL.GL_UNSIGNED_BYTE,
+                        textures[i].getPixels()
+                );
+
+                // تحسين جودة النسيج باستخدام فلتر LINEAR
+                gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
+                gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
+            } catch (IOException e) {
+                System.out.println(e);
+                e.printStackTrace();
+            }
+        }
+
+        gl.glColor3f(1f, 1f, 1f);
     }
 
     public void display(GLAutoDrawable drawable) {
         GL gl = drawable.getGL();
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);
-        // Draw header at the top
-        drawText(gl, "Instructions", 0.7f);
-
-        // Draw the instruction list below the header
-        float startY = 0.5f; // Start slightly below the header
-        float lineSpacing = -0.15f; // Spacing between each line
-        drawText(gl, "* Use arrow keys to move the pointer", startY + 0 * lineSpacing);
-        drawText(gl, "* Reach the escape gate before the time runs out", startY + 1 * lineSpacing);
-        drawText(gl, "* Yellow color represents the path traced", startY + 2 * lineSpacing);
-        drawText(gl, "* If you are lost press 1 to relocate to the beginning gate", startY + 3 * lineSpacing);
-        drawText(gl, "* You have 90 seconds to finish the game", startY + 4 * lineSpacing);
-        drawText(gl, "* Press ESC to return to the main menu", startY + 5 * lineSpacing);
+        drawBackground(gl, drawable,0);
     }
 
-    private void drawText(GL gl, String text, float y) {
-        gl.glDisable(GL.GL_TEXTURE_2D); // Disable textures to avoid interference with text rendering
-        gl.glDisable(GL.GL_BLEND); // Disable blending for text to apply colors correctly
+    public void drawBackground(GL gl, GLAutoDrawable drawable ,int textureIndex) {
+        gl.glEnable(GL.GL_BLEND);
+        gl.glBindTexture(GL.GL_TEXTURE_2D, textureID[textureIndex]);
 
-        // Set the text color
-        gl.glColor3f(0,0,0); // Set black color for text
+        gl.glPushMatrix();
 
-        // Calculate the width of the text in pixels
-        int textWidth = 0;
-        for (char c : text.toCharArray()) {
-            textWidth += glut.glutBitmapWidth(GLUT.BITMAP_HELVETICA_18, c);
-        }
+        gl.glBegin(GL.GL_QUADS);
+        gl.glTexCoord2f(0.0f, 0.0f);
+        gl.glVertex3f(-1.0f, -1.0f, -1.0f);
+        gl.glTexCoord2f(1.0f, 0.0f);
+        gl.glVertex3f(1.0f, -1.0f, -1.0f);
+        gl.glTexCoord2f(1.0f, 1.0f);
+        gl.glVertex3f(1.0f, 1.0f, -1.0f);
+        gl.glTexCoord2f(0.0f, 1.0f);
+        gl.glVertex3f(-1.0f, 1.0f, -1.0f);
+        gl.glEnd();
 
-        // Calculate x position to center the text
-        float x = -((float) textWidth / 800); // Assuming 800 is the width of the window
-        gl.glRasterPos2f(x, y);
+        gl.glPopMatrix();
 
-        // Draw each character
-        for (char c : text.toCharArray()) {
-            glut.glutBitmapCharacter(GLUT.BITMAP_HELVETICA_18, c);
-        }
-
-        gl.glEnable(GL.GL_BLEND); // Re-enable blending
-        gl.glEnable(GL.GL_TEXTURE_2D); // Re-enable textures
-
+        gl.glDisable(GL.GL_BLEND);
     }
+
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
-        if (keyCode == KeyEvent.VK_ESCAPE) {
+        if (keyCode == KeyEvent.VK_ESCAPE||keyCode == KeyEvent.VK_BACK_SPACE) {
             frame.dispose();
             Menu mainMenu = new Menu();
             mainMenu.start();

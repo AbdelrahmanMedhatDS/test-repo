@@ -45,10 +45,9 @@ public class MainMenuScene implements GLEventListener, KeyListener {
             }
         });
 
-        // إضافة MouseMotionListener لتحسين تأثيرات التفاعل مع الأزرار
 
         frame.add(canvas);
-        frame.setSize(800, 600);
+        frame.setSize(1300, 900);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
@@ -102,11 +101,9 @@ public class MainMenuScene implements GLEventListener, KeyListener {
 
         gl.glPushMatrix();
 
-        // الحصول على أبعاد الشاشة (حجم الـ Canvas)
         int width = drawable.getWidth();  // أبعاد الـ Canvas الفعلية
         int height = drawable.getHeight(); // أبعاد الـ Canvas الفعلية
 
-        // ملء مساحة كامل النافذة (Canvas) مع تصغير الصورة لتناسب
         gl.glBegin(GL.GL_QUADS);
         gl.glTexCoord2f(0.0f, 0.0f);
         gl.glVertex3f(-1.0f, -1.0f, -1.0f);
@@ -125,15 +122,13 @@ public class MainMenuScene implements GLEventListener, KeyListener {
 
 
     public void handleMouseClick(int mouseX, int mouseY, int canvasWidth, int canvasHeight) {
-        // تحويل إحداثيات الماوس من شاشة إلى إحداثيات OpenGL
         float normalizedX = (2.0f * mouseX) / canvasWidth - 1.0f;
         float normalizedY = 1.0f - (2.0f * mouseY) / canvasHeight;
 
-        // التحقق من الضغط على الأزرار
         if (normalizedX >= -0.36f && normalizedX <= 0.38f && normalizedY >= 0.13 && normalizedY <= 0.33) {
             single();
         } else if (normalizedX >= -0.36f && normalizedX <= 0.38f && normalizedY >= -0.45f && normalizedY <= -0.22f) {
-            Multi(); // الزر الجديد (Start 2)
+            Multi();
         } else if (normalizedX >= -0.95f && normalizedX <= -0.60f && normalizedY >= -0.94f && normalizedY <= -0.82f) {
             exitGame();
         }
@@ -141,7 +136,7 @@ public class MainMenuScene implements GLEventListener, KeyListener {
 
 
     public void Multi() {
-        System.out.println("Start Game");
+        System.out.println("Multi Game");
         frame.dispose();
         Levels multiGameScene = new Levels();
         multiGameScene.start();
@@ -153,11 +148,8 @@ public class MainMenuScene implements GLEventListener, KeyListener {
         singleGameScene.start();
     }
 
-
-
     public void exitGame() {
         System.out.println("Exit Game");
-        System.out.println("START GAME ");
         frame.dispose();
         Menu mainMenuScene = new Menu();
         mainMenuScene.start();
@@ -166,7 +158,7 @@ public class MainMenuScene implements GLEventListener, KeyListener {
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
 
-        if (keyCode == KeyEvent.VK_ESCAPE) {
+        if (keyCode == KeyEvent.VK_ESCAPE||keyCode == KeyEvent.VK_BACK_SPACE) {
             frame.dispose();
             Menu mainMenu = new Menu();
             mainMenu.start();

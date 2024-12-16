@@ -42,7 +42,7 @@ public class GameOverScene implements GLEventListener, KeyListener {
         canvas.requestFocusInWindow();
 
         frame.add(canvas);
-        frame.setSize(800, 600);
+        frame.setSize(1300, 900);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
@@ -120,7 +120,6 @@ public class GameOverScene implements GLEventListener, KeyListener {
         //single player won
         if (gameOverCondition == 3) {
             gameover(gl, glAutoDrawable,2);
-            drawText(gl, "PLAYER1 ", -0, -0F);
 
         }
         //Single player time expired
