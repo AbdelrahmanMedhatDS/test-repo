@@ -47,8 +47,8 @@ public class MultiGameScene implements GLEventListener, KeyListener {
     private Timer player2Timer;
 
 
-    private boolean gameOver= false;
-    private boolean takeHint= false;
+    private boolean gameOver = false;
+    private boolean takeHint = false;
     private boolean isP1 = false;
     private boolean isP2 = false;
 
@@ -57,24 +57,26 @@ public class MultiGameScene implements GLEventListener, KeyListener {
     private boolean gamePaused = false;
 
 
-    public MultiGameScene(){} // default constructor
-    public MultiGameScene(int levelSelection){
+    public MultiGameScene() {
+    } // default constructor
+
+    public MultiGameScene(int levelSelection) {
         // used constructor to handle the level selection feature
-        if(levelSelection == 1){
+        if (levelSelection == 1) {
             this.rows = 11;
             this.cols = 31;
             gameTime = 120;
             penalty = 10;
 
         }
-        if(levelSelection == 2){
+        if (levelSelection == 2) {
             this.rows = 21;
             this.cols = 41;
             gameTime = 100;
             penalty = 20;
 
         }
-        if(levelSelection == 3){
+        if (levelSelection == 3) {
             this.rows = 31;
             this.cols = 51;
             gameTime = 90;
@@ -84,6 +86,7 @@ public class MultiGameScene implements GLEventListener, KeyListener {
     }
 
     JFrame frame;
+
     public void start() {
         System.out.println("game scene ....");
 
@@ -100,12 +103,10 @@ public class MultiGameScene implements GLEventListener, KeyListener {
         canvas.setFocusable(true);
         canvas.requestFocusInWindow();
 
-        FPSAnimator animator = new FPSAnimator(canvas,60);
+        FPSAnimator animator = new FPSAnimator(canvas, 60);
         animator.start();
 
     }
-
-
 
 
     @Override
@@ -124,7 +125,6 @@ public class MultiGameScene implements GLEventListener, KeyListener {
 
     @Override
     public void display(GLAutoDrawable drawable) {
-        System.out.println("Displaying frame");
 
         GL gl = drawable.getGL();
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);
@@ -137,27 +137,7 @@ public class MultiGameScene implements GLEventListener, KeyListener {
             drawPauseOverlay(gl);
         }
 
-        if (takeHint) {
-            if(isP1) {
-                drawSinglePathHighlight(
-                        gl,
-                        mazeGenerator.getPlayer1Y(),
-                        mazeGenerator.getPlayer1X(),
-                        mazeGenerator.getExitY(),
-                        mazeGenerator.getExitX(),
-                        new float[]{0.5f, 1.0f, 0.5f, 0.3f});
-            }
 
-            if (isP2) {
-                drawSinglePathHighlight(
-                        gl,
-                        mazeGenerator.getPlayer2Y(),
-                        mazeGenerator.getPlayer2X(),
-                        mazeGenerator.getExitY(),
-                        mazeGenerator.getExitX(),
-                        new float[]{0.5f, 1.0f, 0.5f, 0.3f});
-            }
-        }
 
         // Display player timers
         displayTimers(gl);
@@ -165,13 +145,10 @@ public class MultiGameScene implements GLEventListener, KeyListener {
         // Only update and check timers if not paused
         if (!gamePaused) {
             checkGameOver();
-            Penalty();
+
         }
 
     }
-
-
-
 
 
     private void generateMaze() {
@@ -202,8 +179,8 @@ public class MultiGameScene implements GLEventListener, KeyListener {
 
     private void drawPlayer(GL gl, int x, int y, int playerNumber) {
         float r = (playerNumber == 1) ? 0.0f : 1.0f;
-        float g = (playerNumber == 1) ? 0.0f : 1.0f;
-        float b = (playerNumber == 1) ? 1.0f : 0.0f;
+        float g = (playerNumber == 1) ? 1.0f : 0.0f;
+        float b = (playerNumber == 1) ? 0.0f : 0.0f;
         drawSquare(gl, x, y, r, g, b);
     }
 
@@ -253,15 +230,16 @@ public class MultiGameScene implements GLEventListener, KeyListener {
         GLUT glut = new GLUT();
 
         // Player 1 Timer - Top Left Corner
-        gl.glColor3f(0.0f, 0.0f, 1.0f); // Blue color
+        gl.glColor3f(0.0f, 1.0f, 0.0f); // green color
         gl.glRasterPos2f(-2, rows + 2); // Positioned just above the maze on the left side
         glut.glutBitmapString(GLUT.BITMAP_HELVETICA_18, "P1 Time: " + player1Timer.getTimeLeft() + "s");
 
         // Player 2 Timer - Top Right Corner
-        gl.glColor3f(1.0f, 1.0f, 0.0f); // yellow color
+        gl.glColor3f(1.0f, 0.0f, 0.0f); // red color
         gl.glRasterPos2f(cols - 6, rows + 2); // Positioned just above the maze on the right side
         glut.glutBitmapString(GLUT.BITMAP_HELVETICA_18, "P2 Time: " + player2Timer.getTimeLeft() + "s");
     }
+
     private void drawSinglePathHighlight(GL gl, int startY, int startX, int endY, int endX, float[] color) {
         PathFinder pathFinder = new PathFinder(maze);
 
@@ -284,26 +262,21 @@ public class MultiGameScene implements GLEventListener, KeyListener {
     }
 
 
-
     private void checkGameOver() {
-        if (player2X == mazeGenerator.getExitX() && player2Y== mazeGenerator.getExitY()) {
+        if (player2X == mazeGenerator.getExitX() && player2Y == mazeGenerator.getExitY()) {
             System.out.println("Player 1 ran out of time!");
             gameOver = true;
             GameOverScene gameoverScene = new GameOverScene(2);
             frame.dispose();
             gameoverScene.start();
 
-        }
-
-        else if (player1X == mazeGenerator.getExitX() && player1Y== mazeGenerator.getExitY()) {
+        } else if (player1X == mazeGenerator.getExitX() && player1Y == mazeGenerator.getExitY()) {
             System.out.println("Player 2 ran out of time!");
             gameOver = true;
             GameOverScene gameoverScene = new GameOverScene(1);
             frame.dispose();
             gameoverScene.start();
-        }
-
-        else if (player2Timer.hasExpired() && player1Timer.hasExpired()) {
+        } else if (player2Timer.hasExpired() && player1Timer.hasExpired()) {
             gameOver = true;
             GameOverScene gameoverScene = new GameOverScene(5);
             frame.dispose();
@@ -311,7 +284,7 @@ public class MultiGameScene implements GLEventListener, KeyListener {
         }
     }
 
-    private void Penalty(){
+    private void Penalty() {
         if (whoTakeTheHint == 1) player1Timer.reduceTime(penalty);
         else if (whoTakeTheHint == 2) player2Timer.reduceTime(penalty);
         whoTakeTheHint = 0;
@@ -322,11 +295,13 @@ public class MultiGameScene implements GLEventListener, KeyListener {
         player1X = mazeGenerator.getPlayer1X();
         player1Y = mazeGenerator.getPlayer1Y();
     }
+
     private void resetPlayer2() {
         // Reset the init values
         player2X = mazeGenerator.getPlayer2X();
         player2Y = mazeGenerator.getPlayer2Y();
     }
+
     private void drawSquare(GL gl, int x, int y, float r, float g, float b) {
         gl.glColor3f(r, g, b);
         gl.glBegin(GL.GL_QUADS);
@@ -336,7 +311,6 @@ public class MultiGameScene implements GLEventListener, KeyListener {
         gl.glVertex2f(x, y + 1);
         gl.glEnd();
     }
-
 
 
     @Override
@@ -363,10 +337,9 @@ public class MultiGameScene implements GLEventListener, KeyListener {
     }
 
 
-
     @Override
     public void keyPressed(KeyEvent e) {
-        try{
+        try {
 
             int key = e.getKeyCode();
 
@@ -385,28 +358,28 @@ public class MultiGameScene implements GLEventListener, KeyListener {
                 else if (key == KeyEvent.VK_D && maze[player2Y][player2X + 1] == 0) player2X++;
 
                 // reload the game
-                if (key == KeyEvent.VK_R){
+                if (key == KeyEvent.VK_R) {
                     generateMaze();
                 }
 
                 // re-set the places
-                if(key == KeyEvent.VK_0 || key == KeyEvent.VK_NUMPAD0){
+                if (key == KeyEvent.VK_0 || key == KeyEvent.VK_NUMPAD0) {
                     resetPlayer1();
                 }
-                if(key == KeyEvent.VK_SPACE){
+                if (key == KeyEvent.VK_SPACE) {
                     resetPlayer2();
                 }
 
-                if(key == KeyEvent.VK_H){
-                    takeHint=true;
+                if (key == KeyEvent.VK_H) {
+                    takeHint = true;
                 }
 
-                if(key == KeyEvent.VK_1 || key == KeyEvent.VK_NUMPAD1 ){
+                if (key == KeyEvent.VK_1 || key == KeyEvent.VK_NUMPAD1) {
                     isP1 = true;
                     whoTakeTheHint = 1;
                 }
 
-                if(key == KeyEvent.VK_2 || key == KeyEvent.VK_NUMPAD2 ){
+                if (key == KeyEvent.VK_2 || key == KeyEvent.VK_NUMPAD2) {
                     isP2 = true;
                     whoTakeTheHint = 2;
                 }
@@ -414,19 +387,19 @@ public class MultiGameScene implements GLEventListener, KeyListener {
 
             // Minimize and Maximize the JFrame
             if (key == KeyEvent.VK_F) frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-            else if (key == KeyEvent.VK_ESCAPE&& frame.getExtendedState() == JFrame.MAXIMIZED_BOTH){
+            else if (key == KeyEvent.VK_ESCAPE && frame.getExtendedState() == JFrame.MAXIMIZED_BOTH) {
                 frame.setExtendedState(JFrame.NORMAL);
             }
 
             // back to the MainMenu
-            if (key == KeyEvent.VK_BACK_SPACE){
+            if (key == KeyEvent.VK_BACK_SPACE) {
                 frame.dispose();
-                SingleLevels menu = new SingleLevels();
-                menu.start();
+                Levels level = new Levels();
+                level.start();
             }
 
             // the Pause Feature Handling
-            if (key == KeyEvent.VK_P){
+            if (key == KeyEvent.VK_P) {
                 gamePaused = !gamePaused;
 
                 if (gamePaused) {
@@ -440,7 +413,7 @@ public class MultiGameScene implements GLEventListener, KeyListener {
                 }
             }
 
-        }catch (Exception exception){
+        } catch (Exception exception) {
             System.err.println("there is and INPUT_ERROR ");
             System.out.print(" :-" + exception.toString());
         }
@@ -448,12 +421,16 @@ public class MultiGameScene implements GLEventListener, KeyListener {
     }
 
 
+    @Override
+    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
+    }
 
     @Override
-    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {}
+    public void keyTyped(KeyEvent e) {
+    }
+
     @Override
-    public void keyTyped(KeyEvent e) {}
-    @Override
-    public void keyReleased(KeyEvent e) {}
+    public void keyReleased(KeyEvent e) {
+    }
 
 }

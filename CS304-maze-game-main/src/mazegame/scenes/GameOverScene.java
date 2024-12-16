@@ -25,7 +25,7 @@ public class GameOverScene implements GLEventListener, KeyListener {
     }
 
     JFrame frame;
-    private final String[] textureNames = {"back1.png"};
+    private final String[] textureNames = {"p1.jpg","p2.jpg","sp.jpg","d.jpg","go.jpg"};
     private final int textureLen = textureNames.length;
     private int[] textureID = new int[textureLen];
     private TextureReader.Texture[] textures = new TextureReader.Texture[textureLen];
@@ -69,8 +69,9 @@ public class GameOverScene implements GLEventListener, KeyListener {
 
     public void init(GLAutoDrawable drawable) {
         GL gl = drawable.getGL();
+        gl.glClearColor(1f, 1, 1,1);
 
-        gl.glClearColor(26/255f, 29/255f, 37/255f,0);
+//        gl.glClearColor(26/255f, 29/255f, 37/255f,0);
         gl.glEnable(GL.GL_TEXTURE_2D);
         gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
         gl.glGenTextures(textureLen, textureID, 0);
@@ -110,24 +111,26 @@ public class GameOverScene implements GLEventListener, KeyListener {
 
             gameover(gl, glAutoDrawable,0);
 
+
         }
         //player2 won
         if (gameOverCondition == 2) {
-            gameover(gl, glAutoDrawable,0);
+            gameover(gl, glAutoDrawable,1);
         }
         //single player won
         if (gameOverCondition == 3) {
-            gameover(gl, glAutoDrawable,0);
+            gameover(gl, glAutoDrawable,2);
+            drawText(gl, "PLAYER1 ", -0, -0F);
 
         }
         //Single player time expired
         if (gameOverCondition == 4) {
-            gameover(gl, glAutoDrawable,0);
+            gameover(gl, glAutoDrawable,4);
 
         }
         //time expired, the game ended as a draw
         if (gameOverCondition == 5) {
-            gameover(gl, glAutoDrawable,0);
+            gameover(gl, glAutoDrawable,3);
 
         }
     }
@@ -141,6 +144,15 @@ public class GameOverScene implements GLEventListener, KeyListener {
     public void displayChanged(GLAutoDrawable glAutoDrawable, boolean b, boolean b1) {
 
     }
+    private void drawText(GL gl, String text, float x, float y) {
+        gl.glColor3f(toRGB(255), toRGB(255), toRGB(255));
+//        gl.glColor3f(0f,0f,0f);
+        gl.glRasterPos2f(x, y);
+
+        for (char c : text.toCharArray()) {
+            glut.glutBitmapCharacter(GLUT.BITMAP_HELVETICA_18, c);
+        }
+    }
     public void gameover (GL gl, GLAutoDrawable drawable,int textureIndex) {
         gl.glEnable(GL.GL_BLEND);
         gl.glBindTexture(GL.GL_TEXTURE_2D, textureID[textureIndex]);
@@ -152,13 +164,13 @@ public class GameOverScene implements GLEventListener, KeyListener {
 
         gl.glBegin(GL.GL_QUADS);
         gl.glTexCoord2f(0.0f, 0.0f);
-        gl.glVertex3f(-1f, 0.0f, -1.0f);  // الزاوية السفلية اليسرى
+        gl.glVertex3f(-1.0f, -1.0f, -1.0f);
         gl.glTexCoord2f(1.0f, 0.0f);
-        gl.glVertex3f(1f, 0.0f, -1.0f);   // الزاوية السفلية اليمنى
+        gl.glVertex3f(1.0f, -1.0f, -1.0f);
         gl.glTexCoord2f(1.0f, 1.0f);
-        gl.glVertex3f(1f, 1.0f, -1.0f);    // الزاوية العليا اليمنى
+        gl.glVertex3f(1.0f, 1.0f, -1.0f);
         gl.glTexCoord2f(0.0f, 1.0f);
-        gl.glVertex3f(-1f, 1.0f, -1.0f);   // الزاوية العليا اليسرى
+        gl.glVertex3f(-1.0f, 1.0f, -1.0f);
         gl.glEnd();
 
         gl.glPopMatrix();

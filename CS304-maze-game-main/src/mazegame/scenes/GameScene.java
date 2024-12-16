@@ -47,9 +47,8 @@ public class GameScene implements GLEventListener, KeyListener {
 
 
     private boolean gameOver= false;
-    private boolean takeHint= false;
-    private boolean isP1 = false;
     int level=0;
+    int score=0;
     public int getRows() {
         return rows;
     }
@@ -159,26 +158,14 @@ public class GameScene implements GLEventListener, KeyListener {
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
         drawMaze(gl);
-        drawPlayer(gl, player1X, player1Y, 1);
+        drawPlayer(gl, player1X, player1Y);
 
 
         if (gamePaused) {
             drawPauseOverlay(gl);
         }
 
-        if (takeHint) {
-            if(isP1) {
-                drawSinglePathHighlight(
-                        gl,
-                        mazeGenerator.getPlayer1Y(),
-                        mazeGenerator.getPlayer1X(),
-                        mazeGenerator.getExitY(),
-                        mazeGenerator.getExitX(),
-                        new float[]{0.5f, 1.0f, 0.5f, 0.3f});
-            }
 
-
-        }
 
         // Display player timers
         displayTimers(gl);
@@ -218,11 +205,8 @@ public class GameScene implements GLEventListener, KeyListener {
         }
     }
 
-    private void drawPlayer(GL gl, int x, int y, int playerNumber) {
-        float r = (playerNumber == 1) ? 0.0f : 1.0f;
-        float g = (playerNumber == 1) ? 0.0f : 1.0f;
-        float b = (playerNumber == 1) ? 1.0f : 0.0f;
-        drawSquare(gl, x, y, r, g, b);
+    private void drawPlayer(GL gl, int x, int y) {
+        drawSquare(gl, x, y, 0, 1, 0);
     }
 
     private void drawPauseOverlay(GL gl) {
@@ -271,7 +255,7 @@ public class GameScene implements GLEventListener, KeyListener {
         GLUT glut = new GLUT();
 
         // Player 1 Timer - Top Left Corner
-        gl.glColor3f(0.0f, 0.0f, 1.0f); // Blue color
+        gl.glColor3f(0.0f, 1.0f, .0f); // green color
         gl.glRasterPos2f(-2, rows + 2); // Positioned just above the maze on the left side
         glut.glutBitmapString(GLUT.BITMAP_HELVETICA_18, "P1 Time: " + player1Timer.getTimeLeft() + "s");
 
@@ -310,22 +294,24 @@ public class GameScene implements GLEventListener, KeyListener {
 
         }
         if (player1X== mazeGenerator.getExitX()&&player1Y== mazeGenerator.getExitY()&&level==1) {
+            score=player1Timer.getTimeLeft()*100;
             frame.dispose();
             GameScene singleGameScene = new GameScene(2);
             singleGameScene.start();
 
+
         }
         if (player1X== mazeGenerator.getExitX()&&player1Y== mazeGenerator.getExitY()&&level==2) {
+            score+=player1Timer.getTimeLeft()*200;
             frame.dispose();
             GameScene singleGameScene = new GameScene(3);
             singleGameScene.start();
 
-
         }
         if (player1X== mazeGenerator.getExitX()&&player1Y== mazeGenerator.getExitY()&&level==3) {
+            score+=player1Timer.getTimeLeft()*300;
             if (SingleLevels.myStart==1){
             gameOver = true;
-
             GameOverScene gameoverScene = new GameOverScene(3);
             frame.dispose();
             gameoverScene.start();
@@ -335,8 +321,10 @@ public class GameScene implements GLEventListener, KeyListener {
                 singleGameScene.start();
             }
 
+
         }
         if (player1X== mazeGenerator.getExitX()&&player1Y== mazeGenerator.getExitY()&&level==4) {
+            score+=player1Timer.getTimeLeft()*400;
             if (SingleLevels.myStart==2){
                 gameOver = true;
 
@@ -348,9 +336,10 @@ public class GameScene implements GLEventListener, KeyListener {
                 GameScene singleGameScene = new GameScene(5);
                 singleGameScene.start();
             }
+
         }
         if (player1X== mazeGenerator.getExitX()&&player1Y== mazeGenerator.getExitY()&&level==5) {
-
+                score+=player1Timer.getTimeLeft()*500;
                 gameOver = true;
                 GameOverScene gameoverScene = new GameOverScene(3);
                 frame.dispose();
@@ -427,11 +416,6 @@ public class GameScene implements GLEventListener, KeyListener {
                 // re-set the places
                 if(key == KeyEvent.VK_0 || key == KeyEvent.VK_NUMPAD0){
                     resetPlayer1();
-                }
-
-
-                if(key == KeyEvent.VK_H){
-                    takeHint=true;
                 }
 
 

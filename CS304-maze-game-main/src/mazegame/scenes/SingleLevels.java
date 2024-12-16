@@ -20,7 +20,7 @@ public class SingleLevels implements GLEventListener, KeyListener {
     public static int myStart=0;
 
     // صورة الأزرار
-    private final String[] textureNames = {"easy.png", "normal.png", "hard.png"};
+    private final String[] textureNames = {"levels.jpg"};
     private final int textureLen = textureNames.length;
     private int[] textureID = new int[textureLen];
     private TextureReader.Texture[] textures = new TextureReader.Texture[textureLen];
@@ -48,13 +48,6 @@ public class SingleLevels implements GLEventListener, KeyListener {
             }
         });
 
-        // إضافة MouseMotionListener لتحسين تأثيرات التفاعل مع الأزرار
-        canvas.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseMoved(MouseEvent e) {
-                handleMouseOver(e.getX(), e.getY(), canvas.getWidth(), canvas.getHeight());
-            }
-        });
 
         frame.add(canvas);
         frame.setSize(800, 600);
@@ -102,53 +95,40 @@ public class SingleLevels implements GLEventListener, KeyListener {
     public void display(GLAutoDrawable drawable) {
         GL gl = drawable.getGL();
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);
-        drawButtons(gl, drawable);
-    }
-
-
-    public void drawButtons(GL gl, GLAutoDrawable drawable) {
-        // تحديد أبعاد الأزرار ومواقعها
-        float buttonWidth = 0.8f;  // زيادة العرض
-        float buttonHeight = 0.3f; // زيادة الارتفاع
-
-        // زر 1 (Start)
-        drawButton(gl, -0.8f, 0.3f, buttonWidth, buttonHeight, 0);
-
-        // زر 2 (Start 2) - كان "How to Play" في السابق
-        drawButton(gl, -0.8f, 0.05f, buttonWidth, buttonHeight, 1);
-
-        // زر 3 (Exit)
-        drawButton(gl, -0.8f, -0.2f, buttonWidth, buttonHeight, 2);
+        drawBackground(gl, drawable);
 
     }
 
-    public void drawButton(GL gl, float x, float y, float width, float height, int textureIndex) {
+
+
+    public void drawBackground(GL gl, GLAutoDrawable drawable) {
+        gl.glEnable(GL.GL_BLEND);
+        gl.glBindTexture(GL.GL_TEXTURE_2D, textureID[0]);
+
         gl.glPushMatrix();
-        gl.glTranslatef(x, y, 0f);  // تحديد موقع الزر
 
-        // إضافة تأثيرات التفاعل
-        if (isButtonHovered[textureIndex]) {
-            gl.glColor3f(0.8f, 0.8f, 0.8f); // تغيير اللون عند التفاعل
-        } else {
-            gl.glColor3f(1f, 1f, 1f);
-        }
+        // الحصول على أبعاد الشاشة (حجم الـ Canvas)
+        int width = drawable.getWidth();  // أبعاد الـ Canvas الفعلية
+        int height = drawable.getHeight(); // أبعاد الـ Canvas الفعلية
 
-        // رسم الصورة كزر
-        gl.glBindTexture(GL.GL_TEXTURE_2D, textureID[textureIndex]);
-
+        // ملء مساحة كامل النافذة (Canvas) مع تصغير الصورة لتناسب
         gl.glBegin(GL.GL_QUADS);
         gl.glTexCoord2f(0.0f, 0.0f);
-        gl.glVertex3f(0, 0, 0);
+        gl.glVertex3f(-1.0f, -1.0f, -1.0f);
         gl.glTexCoord2f(1.0f, 0.0f);
-        gl.glVertex3f(width, 0, 0);
+        gl.glVertex3f(1.0f, -1.0f, -1.0f);
         gl.glTexCoord2f(1.0f, 1.0f);
-        gl.glVertex3f(width, height, 0);
+        gl.glVertex3f(1.0f, 1.0f, -1.0f);
         gl.glTexCoord2f(0.0f, 1.0f);
-        gl.glVertex3f(0, height, 0);
+        gl.glVertex3f(-1.0f, 1.0f, -1.0f);
         gl.glEnd();
 
         gl.glPopMatrix();
+
+        gl.glDisable(GL.GL_BLEND);
     }
+
+
 
     public void handleMouseClick(int mouseX, int mouseY, int canvasWidth, int canvasHeight) {
         // تحويل إحداثيات الماوس من شاشة إلى إحداثيات OpenGL
@@ -156,28 +136,27 @@ public class SingleLevels implements GLEventListener, KeyListener {
         float normalizedY = 1.0f - (2.0f * mouseY) / canvasHeight;
 
         // التحقق من الضغط على الأزرار
-        if (normalizedX >= -0.8f && normalizedX <= -0.05f && normalizedY >= 0.3f && normalizedY <= 0.5f) {
+        if (normalizedX >= -0.36f && normalizedX <= 0.38f && normalizedY >= 0.50f && normalizedY <= 0.73f) {
             easy();
-        } else if (normalizedX >= -0.8f && normalizedX <= -0.05f && normalizedY >= 0.05f && normalizedY <= 0.25f) {
+        } else if (normalizedX >= -0.36f && normalizedX <= 0.38f && normalizedY >= -0.05 && normalizedY <= 0.18) {
             normal(); // الزر الجديد (Start 2)
-        } else if (normalizedX >= -0.8f && normalizedX <= -0.05f && normalizedY >= -0.2f && normalizedY <= 0.0f) {
+        } else if (normalizedX >= -0.36f && normalizedX <= 0.38f && normalizedY >= -0.65f && normalizedY <= -0.42f) {
             hard();
+        }
+        else if (normalizedX >= -0.8f && normalizedX <= -0.05f && normalizedY >= -0.94f && normalizedY <= -0.82f) {
+            exitGame();
         }
 
     }
 
-    public void handleMouseOver(int mouseX, int mouseY, int canvasWidth, int canvasHeight) {
-        // تحويل إحداثيات الماوس من شاشة إلى إحداثيات OpenGL
-        float normalizedX = (2.0f * mouseX) / canvasWidth - 1.0f;
-        float normalizedY = 1.0f - (2.0f * mouseY) / canvasHeight;
 
-        // التحقق من التفاعل مع الأزرار
-        isButtonHovered[0] = normalizedX >= -0.8f && normalizedX <= -0.4f && normalizedY >= 0.3f && normalizedY <= 0.5f;
-        isButtonHovered[1] = normalizedX >= -0.8f && normalizedX <= -0.4f && normalizedY >= 0.05f && normalizedY <= 0.25f;
-        isButtonHovered[2] = normalizedX >= -0.8f && normalizedX <= -0.4f && normalizedY >= -0.2f && normalizedY <= 0.0f;
-
+    public void exitGame() {
+        System.out.println("Exit Game");
+        System.out.println("START GAME ");
+        frame.dispose();
+        MainMenuScene mainMenuScene = new MainMenuScene();
+        mainMenuScene.start();
     }
-
     public void normal() {
         myStart=2;
         frame.dispose();
