@@ -1,8 +1,10 @@
 package mazegame.scenes;
 
 import static utilities.texture.TextureReader.readTexture;
+
 import utilities.texture.TextureReader;
 import com.sun.opengl.util.GLUT;
+
 import javax.media.opengl.*;
 import javax.media.opengl.glu.GLU;
 import javax.swing.JFrame;
@@ -11,12 +13,16 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import mazegame.logic.musicPlayer;
 
 public class Menu implements GLEventListener, KeyListener {
     private JFrame frame;
     private GLUT glut;
+    private static musicPlayer musicPlayer = new musicPlayer();
 
-    // صورة الأزرار
+    public static musicPlayer getMusicPlayer() {
+        return musicPlayer;
+    }
     private final String[] textureNames = {"back1.jpg"};
     private final int textureLen = textureNames.length;
     private int[] textureID = new int[textureLen];
@@ -25,7 +31,7 @@ public class Menu implements GLEventListener, KeyListener {
 
     public void start() {
         System.out.println("main menu ....");
-
+        musicPlayer.playBackgroundMusic("src/utilities/sounds/home.wav");
         frame = new JFrame("Maze Game - START");
 
         GLCapabilities capabilities = new GLCapabilities();
@@ -35,11 +41,11 @@ public class Menu implements GLEventListener, KeyListener {
         canvas.setFocusable(true);
         canvas.requestFocusInWindow();
 
-        // إضافة MouseListener للاستماع للنقرات
         canvas.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 handleMouseClick(e.getX(), e.getY(), canvas.getWidth(), canvas.getHeight());
+
             }
         });
 
@@ -55,10 +61,7 @@ public class Menu implements GLEventListener, KeyListener {
 
     public void init(GLAutoDrawable drawable) {
         GL gl = drawable.getGL();
-
-        gl.glClearColor(25/255f, 29/255f, 38/255f,0);
         gl.glEnable(GL.GL_TEXTURE_2D);
-        gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
         gl.glGenTextures(textureLen, textureID, 0);
         for (int i = 0; i < textureLen; i++) {
             try {
@@ -74,8 +77,6 @@ public class Menu implements GLEventListener, KeyListener {
                         GL.GL_UNSIGNED_BYTE,
                         textures[i].getPixels()
                 );
-
-                // تحسين جودة النسيج باستخدام فلتر LINEAR
                 gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
                 gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
             } catch (IOException e) {
@@ -90,10 +91,10 @@ public class Menu implements GLEventListener, KeyListener {
     public void display(GLAutoDrawable drawable) {
         GL gl = drawable.getGL();
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);
-        drawBackground(gl, drawable,0);
+        drawBackground(gl, drawable, 0);
     }
 
-    public void drawBackground(GL gl, GLAutoDrawable drawable ,int textureIndex) {
+    public void drawBackground(GL gl, GLAutoDrawable drawable, int textureIndex) {
         gl.glEnable(GL.GL_BLEND);
         gl.glBindTexture(GL.GL_TEXTURE_2D, textureID[textureIndex]);
 
@@ -117,20 +118,19 @@ public class Menu implements GLEventListener, KeyListener {
 
 
     public void handleMouseClick(int mouseX, int mouseY, int canvasWidth, int canvasHeight) {
-        // تحويل إحداثيات الماوس من شاشة إلى إحداثيات OpenGL
         float normalizedX = (2.0f * mouseX) / canvasWidth - 1.0f;
         float normalizedY = 1.0f - (2.0f * mouseY) / canvasHeight;
 
         if (normalizedX >= -0.36f && normalizedX <= 0.38f && normalizedY >= -0.13f && normalizedY <= 0.1f) {
+            musicPlayer.playSoundEffect("src/utilities/sounds/toy-button.wav");
             starGame();
         } else if (normalizedX >= -0.36f && normalizedX <= 0.38f && normalizedY >= -0.45f && normalizedY <= -0.23f) {
-            showHowToPlay();  // زر "How to Play"
+            musicPlayer.playSoundEffect("src/utilities/sounds/toy-button.wav");
+            showHowToPlay();
         } else if (normalizedX >= -0.36f && normalizedX <= 0.38f && normalizedY >= -0.805f && normalizedY <= -0.57f) {
             exitGame();
         }
     }
-
-
 
 
     public void starGame() {
@@ -155,20 +155,24 @@ public class Menu implements GLEventListener, KeyListener {
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
 
-      if ( keyCode == e.VK_ESCAPE) {
+        if (keyCode == e.VK_ESCAPE) {
             exitGame();
         }
     }
 
     @Override
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {}
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+    }
 
     @Override
-    public void displayChanged(GLAutoDrawable glAutoDrawable, boolean b, boolean b1) {}
+    public void displayChanged(GLAutoDrawable glAutoDrawable, boolean b, boolean b1) {
+    }
 
     @Override
-    public void keyReleased(KeyEvent e) {}
+    public void keyReleased(KeyEvent e) {
+    }
 
     @Override
-    public void keyTyped(KeyEvent e) {}
+    public void keyTyped(KeyEvent e) {
+    }
 }
