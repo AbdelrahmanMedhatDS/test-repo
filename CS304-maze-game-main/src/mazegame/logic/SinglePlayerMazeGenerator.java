@@ -1,5 +1,9 @@
 package mazegame.logic;
 
+import mazegame.entities.Treats;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class SinglePlayerMazeGenerator {
@@ -10,6 +14,9 @@ public class SinglePlayerMazeGenerator {
     // Player and exit position attributes
     private int player1X, player1Y;
     private int exitX, exitY;
+    private List<Treats> treats = new ArrayList<>();
+    private int numberOfTreats = 10;
+    private boolean isMultiplayer = true;
 
     public SinglePlayerMazeGenerator(int rows, int cols) {
         // Ensure odd dimensions for proper maze generation
@@ -120,19 +127,16 @@ public class SinglePlayerMazeGenerator {
     }
 
     private boolean isSolvable() {
-        // Check if there's a path for the player to the exit
         PathFinder pathFinder = new PathFinder(maze);
-
-        // Player path to exit
         return pathFinder.isPathExist(player1Y, player1X, exitY, exitX);
     }
 
-    // Getters for player and exit positions.
     public int getPlayer1X() { return player1X; }
     public int getPlayer1Y() { return player1Y; }
     public int getExitX() { return exitX; }
     public int getExitY() { return exitY; }
-    // Optional: Method to print maze for debugging
+
+
     public void printMaze() {
         for (int y = 0; y < rows; y++) {
             for (int x = 0; x < cols; x++) {

@@ -10,14 +10,16 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import java.io.IOException;
+import mazegame.logic.musicPlayer;
 
 
 import static utilities.texture.TextureReader.readTexture;
-
+//taha
 public class HowToPlayScene implements GLEventListener, KeyListener {
     private JFrame frame;
     private GLCanvas canvas;
     private GLUT glut;
+    private musicPlayer musicPlayer= new musicPlayer();
 
     private final String[] textureNames = {"howtoplay.jpg"};
     private final int textureLen = textureNames.length;
@@ -107,6 +109,7 @@ public class HowToPlayScene implements GLEventListener, KeyListener {
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
         if (keyCode == KeyEvent.VK_ESCAPE||keyCode == KeyEvent.VK_BACK_SPACE) {
+            musicPlayer.playSoundEffect("src/utilities/sounds/toy-button.wav");
             frame.dispose();
             Menu mainMenu = new Menu();
             mainMenu.start();
